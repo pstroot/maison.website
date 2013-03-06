@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Erik Madigan Heck</title>
+    <meta name="description" content="Erik Madigan Heck Photographer, Filmmaker, Art Director based in New York.">
+    <meta name="keywords" content="Erik Madigan Heck, nomenus quarterly, photography, , Ann Demeulemeester, Haider Ackermann, Valentino, Dries Van Noten, Rodarte, Giambattista Valli, film, parsons, gallery, new york, gallery, exhibition">
+  	
+    <base href="/work/Erik_Heck/maisondesprit/V6/public_html/" />
+    
+    <script>
+	// if testing locally, update the base URL
+	if(location.href.indexOf("localhost") != -1){	
+		document.getElementsByTagName("base")[0].href = "/work/Erik_Heck/maisondesprit/V6/public_html/"; 
+	}
+	// incase I forgot to update the base URL on the live site, switch it here.
+	if(location.href.indexOf("maisondesprit.com") != -1 && document.getElementsByTagName("base")[0].href != "/"){	
+		document.getElementsByTagName("base")[0].href = "/"; 
+	}
+	</script>
+    
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script> 
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+	<script src="js/jquery.tinyscrollbar.min.js" type="text/javascript" ></script>
+	<script src="js/fancybox/source/jquery.fancybox.js" type="text/javascript" ></script>    
+    <script src="views/JumpMenu.js"></script>
+    <script src="views/GenericView.js"></script>
+    <script src="views/Contact.js"></script>
+    <script src="views/Press.js"></script>
+    <script src="views/Info.js"></script>
+    <script src="views/News.js"></script>
+    <script src="views/Artists.js"></script>
+    <script src="views/ArtistGrid.js"></script>
+    <script src="views/Films.js"></script>
+    <script src="views/ViewManager.js"></script>
+    <script src="models/NewsCollection.js"></script>
+    <script src="models/PressCollection.js"></script>
+    <script src="models/ArtistCollection.js"></script>
+    <script src="models/ImageCollection.js"></script>
+    <script src="models/FilmCollection.js"></script>
+
+    <script>
+
+	/* SOME BROWSER DETECTION */
+	var ua = navigator.userAgent.toLowerCase(); 
+	var is_mac =    ua.indexOf("mac") > -1;	
+	var is_chrome = false;
+	var is_explorer = ua.indexOf('msie') > -1;
+	var is_firefox = ua.indexOf('firefox') > -1;
+	var is_Opera = ua.indexOf("presto") > -1;
+	var is_chrome = false;
+	var is_safari = false;
+	
+	if (ua.indexOf('safari')!=-1){ 
+		if(ua.indexOf('chrome')  > -1) is_chrome = true;
+		else is_safari = true;
+	}
+  	/* END BROWSER DETECTION */
+  
+	$(document).ready(function() {		
+		Backbone.emulateJSON = true;	
+		app.viewManager = new app.ViewManager({el: ".mainContent"});
+		app.router = new app.Router();
+		Backbone.history = Backbone.history || new Backbone.History({});
+		Backbone.history.start({ 
+			pushState: true,
+			root: $('base').attr('href')
+		});
+
+	});
+	
+	
+	
+// Globally capture clicks. If they are internal and not in the pass 
+//# through list, route them through Backbone's navigate method.
+$(document).on("click", "a[href^='/']", function(event){ 
+//$(document).on("click", "a", function(event){ 
+
+	href = $(event.currentTarget).attr('href');
+	
+  	// chain 'or's for other black list routes
+  	passThrough = href.indexOf('sign_out') >= 0
+
+  	// Allow shift+click for new tabs, etc.
+  	if(!passThrough && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey)
+    	event.preventDefault()
+
+    // Remove leading slashes and hash bangs (backward compatablility)
+    url = href.replace(/^\//,'').replace('#','')
+
+    // Instruct Backbone to trigger routing events
+    app.router.navigate (url, { trigger: true });
+	
+    return false
+});
+	
+	
+	
+	
+	// enlarges a display image to full screen.
+	$('.display-image-container a').fancybox({
+		"padding":0,
+		"closeBtn":false,
+		"closeClick":true,
+		"openEffect" : "fade"
+	});
+			
+	
+	var app = app || {};
+	
+	app.setCustomImageSizes = function(){
+		if(app.displayImageSize){
+			console.log(app.displayImageSize)
+			$('.display-image-container').css("height",app.displayImageSize + "px");
+		}
+		if(app.thumbImageSize){
+			$('.thumbnail-scroller').css("height",(app.thumbImageSize+27) + "px");	
+			$('.artist-detail ul#artist-images li img, .artist-detail ul#artist-images li img a, .artist-detail ul#artist-images li .preloading').css("height",app.thumbImageSize + "px");
+		}
+	};
+	
+	app.Router = Backbone.Router.extend({
+		routes: {
+			"films" 		: "showFilms",
+			"films/:id" 	: "showFilm",
+			"info" 			: "showInfo",
+			"press" 		: "showPress",
+			"contact" 		: "showContact",
+			"photos" 		: "showArtists",
+			"artists" 		: "showArtists",
+			"artists/:id" 	: "showArtist",
+			"artists/:id/:img" 	: "showImage",
+			"" 				: "showIndex",
+			"*other" 		: "defaultRoute"
+		},
+		
+		showArtist 	: function(artistID){			app.viewManager.goto_artist(artistID);			},				
+		showImage 	: function(artistID,imageID){	app.viewManager.goto_image(imageID,artistID);	},			
+		showFilms 	: function(){					app.viewManager.goto_films();					},		
+		showFilm 	: function(filmID){				app.viewManager.goto_film(filmID);				},		
+		showInfo 	: function(){					app.viewManager.goto_information();				},
+		showPress 	: function(){					app.viewManager.goto_press();					},
+		showContact : function(){					app.viewManager.goto_contact();					},
+		
+		showIndex : function(){	
+			app.viewManager.goto_photographs();
+			app.viewManager.showNews();	
+		},
+		showArtists : function(){
+			app.viewManager.goto_photographs();
+			app.viewManager.hideNews();	
+		},
+				
+		
+		defaultRoute : function(other){
+			console.log("Invalid. You attempted to reach: " + other);	
+		}
+	});
+	
+	
+	
+	</script>
+    
+    
+    <!--[if lt IE 9]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <!--[if lt IE 8]>
+        <link href="css/styles_lte_ie7.css" rel="stylesheet" type="text/css">
+    <![endif]-->
+
+	<link href="css/styles.css?v=1" rel="stylesheet" type="text/css">
+	<link href="css/scrollbars.css" rel="stylesheet" type="text/css">
+	<link href="js/fancybox/source/jquery.fancybox.css" rel="stylesheet" type="text/css">
+	<link href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"> 
+    <script>
+	if(is_chrome && is_mac){
+		console.log("Viewing on Mac Chrome")
+		document.write('<'+'link rel="stylesheet" href="css/styles_mac_chrome.css" />');
+	}
+	if(is_safari && is_mac){
+		console.log("Viewing on Mac Safari")
+		document.write('<'+'link rel="stylesheet" href="css/styles_mac_chrome.css" />');
+	}
+	</script> 
+</head>
+<body>
+
+
+    <header>
+    
+        <div class="artistJumpMenu">
+        	Sort By:
+            <select id="jumpTo" name="jumpTo">
+            	<option value=''>Select</option>
+            </select>
+        </div>
+        
+         	
+        
+        <nav>
+          <h1><a href="/">Erik&nbsp;&nbsp;&nbsp;&nbsp;Madigan&nbsp;&nbsp;&nbsp;&nbsp;Heck</a></h1>  
+          <ul>
+            <li class='nav-photos'><a href="/photos">photographs</a></li>
+            <li class='nav-films'><a href="/films">films</a></li>
+            <li class='nav-info'><a href="/info">information</a></li>
+            <li class='nav-press'><a href="/press">press</a></li>
+            <li class='nav-contact'><a href="/contact">contact</a></li>
+          </ul>
+        </nav>  
+        
+          	                   
+	</header>
+
+	<div class="mainContent"></div>
+    
+    <!--<div class="bottomFade" unselectable="on" style="pointer-events: none;"></div>-->
+
+        
+	<script type="text/template" id="pressTemplate">  
+		<div id="press-conainer">
+
+		<% _.each( data, function( press ){ %>
+			<div class='press-item'>
+			<h1><%= press.title %></h1>
+			<p class="press-description"><%= press.description %></p>
+			<p class="press-footer"><a target="_blank" href="<%= press.url %>"><%= press.footer_text %></a></p>
+			</div>
+		<% }); %>	
+		
+        </div>
+    </script>
+     	
+    
+    
+    
+	<script type="text/template" id="newsTemplate">  		
+        <H1><%= headline %></H1>
+		<ul id="news-links">		
+			<% count = 1 %>
+			<% _.each( data, function( newsItem ){ %>
+				<li id='news_<%= newsItem.id %>'><%= count %> <a href="<%= newsItem.url %>" target="<%= newsItem.target %>" style="<%= newsItem.style %>"><%= newsItem.title %></a></li>
+				<% count++ %>
+			<% }); %>			
+       	 </ul>
+    </script>
+    
+        
+        
+	<script type="text/template" id="artistDetailTemplate">  		
+        <H1><%= title %></H1>
+		
+		<div class="display-image-container">
+			<a href=""><img id="display-image"/></a>
+		</div>
+		<div class="display-image-caption"></div>
+		
+		<div style="white-space:nowrap;margin-left:-58px;">
+			<div style="display:inline;" class="scrollArrow" id="left">
+				<img src="images/cursor_left.png">
+			</div>
+			
+			<div class="thumbnail-scroller" style="display:inline-block;vertical-align:-80px;">
+				<ul id="artist-images"></ul>
+			 </div>	
+			 
+			<div style="display:inline;" class="scrollArrow" id="right">
+				<img src="images/cursor_right.png">
+			</div>	 
+		</div>
+		<div style="clear:both;"></div>
+    </script>
+    
+    
+	<script type="text/template" id="imageThumbnailTemplate">  		
+        <a href="/artists/<%= artistSlug %>/<%= slug %>"><img  alt="<%= alt %>" title="<%= alt %>"></a>
+    </script>
+    
+    
+    <script type="text/template" id="infoTemplate">  
+		<div class="information-container">
+			<h1>
+				<span class='nbr'><span>1</span></span>
+				Exhibitions
+			</h1>
+			
+			
+			<div class="info-block">
+				<h3>Salone Internazionale del Mobile </h3>
+				<p>9 April 2013<BR>
+				Etro Milano Space<BR>
+				Via Spartaco, 3<BR>
+				20135 Milano<BR>
+				Italy</p>
+			</div>
+
+
+			<div class="info-block">
+				<h3>Museum f&uuml;r Angewandte Kunst Frankfurt </h3>
+				12 June - 15 September 2013<BR>
+				<p>'Outer Dark: Continuing after Fashion'<BR>
+				Schaumainkai 1 <BR>
+				60594 Frankfurt am Main<BR>
+				Germany</p>
+			</div>
+
+
+			<div class="info-block">
+				<h3>Etro Soho Space</h3>
+				<p>29 January 2013<BR>
+				Etro 2013 Exhibition<BR>
+				89 Greene Street<BR>
+				New York, NY 10012</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Avant Garde Diaries Project Space</h3>
+				<p>6 September / 24 September, 2012<BR>
+				372 Broome Street<BR>
+				New York, NY 10013</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Joyce, Hong Kong</h3>
+				<p>17-22 October 2011 EMH Installation<BR>
+				38 Wong Chuk Hang Road<BR>
+				Hong Kong, +852 2871 7183</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Ring Cube Gallery Tokyo</h3>
+				<p>21 September - 9 October 2011 Group Show<BR>
+				San-ai Dream Center 9F<BR>
+				5-7-2 Ginza, Chuo-Ku, Tokyo<BR>
+				+81-3-3289-1521</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Ion Studio New York</h3>
+				<p>1 September - 25 November 2011<BR>
+				January to August, Exhibition and Book Launch by EMH<BR>
+				41 Wooster Street, New York, NY 10012<BR>
+				Opening: 1 September, 7-10 pm</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Chelsea Art Museum, New York </h3>
+				<p>25 February - 8 April 2010<BR>
+				Solo Exhibition, EMH presented by Acura<BR>
+				Also presented in Miami, Dallas, Los Angeles,<BR>
+				San Francisco, Chicago, and Washington D.C.</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Barney&apos;s New York</h3>
+				<p>20 August - 31 November 2010<BR>
+				Rick Owens / EMH Installation<BR>
+				575 Fifth Avenue, New York, NY</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Parsons School For Design</h3>
+				<p>29 August - 12 September 2009<BR>
+				MFA Graduate Photography Exhibition<BR>
+				66 Fifth Avenue, New York, NY 10012</p>
+			</div>
+			
+			
+			<h1 id="books">
+				<span class='nbr'><span>2</span></span>
+				Books
+			</h1>
+			
+			<h2>FORTHCOMING  2013</h2>		
+			
+			<div class="info-block">
+			<h3>DICA</h3>
+			<p>self published, London, 2013<BR>
+			edition of 4000 copies, $65<BR>
+			available September 2013</p>
+			</div>
+			
+			<h2>Previously published  2007-2011 </h2>
+			
+			<div class="info-block">
+				<h3>January to August</h3>
+				<p>self published, New York, 2011<BR>
+				edition of 1500 copies, $45<BR>
+				Dashwood Books NYC</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Tremblant Vielfache</h3>
+				<p>self published, Berlin, 2011<BR>
+				edition of 50 copies, $100<BR>
+				out of print</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Photographs of Color</h3>
+				<p>self published, Copenhagen, 2011<BR>
+				edition of 50 copies, $100<BR>
+				out of print</p>
+			</div>
+			
+			<div class="info-block">
+				<h3>Nomenus Quarterly Volumes 1-10</h3>
+				<p>self published, New York, 2007 / 11<BR>
+				edition of 10 copies each, $6,500<BR>
+				out of print</p>
+			</div>
+			
+
+       	</div>
+	</script>
+      
+  
+	<script type="text/template" id="contactTemplate">  
+        <div id="contact-container">
+			<div class="contact-block" id="contact-1">
+				<h2>Studio</h2>               
+				<div class="contact-details">	
+					Maison d&apos;Esprit<br/>			
+					Erik Madigan Heck<br/>
+					<a href="mailto:erik@maisondesprit.com">erik@maisondesprit.com<br/>
+					<a href="http://www.maisondesprit.com" target="_blank">www.maisondesprit.com</a><br/>
+					+ 1 646 660 2400<br/>
+					2 Water Street, 16A<br/>
+					New York, NY 10004<br/>
+					United States
+				</div>
+			</div>
+			
+			<div class="contact-block" id="contact-2">
+				<h2>New&nbsp;&nbsp;York</h2>     
+				<div class="contact-details">
+					Stockland Martel<br/>
+					Bill Stockland<br/>
+					<a href="mailto:bill@stocklandmartel.com">bill@stocklandmartel.com</a><br/>
+					<a href="http://www.stocklandmartel.com/talent/erik-madigan-heck/photography" target="_blank">www.stocklandmartel.com</a><br/>
+					+ 1 212 727 1400<br/>
+					343 East 18th St. Lower<br/>
+					New York, NY 10003<br/>
+					United States
+				</div>
+			</div>
+			
+			<div class="contact-block" id="contact-3">
+				<h2>London</h2>             
+				<div class="contact-details">
+					Wefolk<br/>
+					Olivia Gideon Thomson<br/>
+					<a href="mailto:olivia@wefolk.com">olivia@wefolk.com</a><br/>
+					<a href="http://www.wefolk.com/photography/13-erik-madigan-heck/categories" target="_blank">www.wefolk.com</a><br/>
+					+ 44 207 482 3169<br/>
+					7 Princelet Street<br/>
+					E1 6QH<br/>
+					United Kingdom
+				</div>
+			</div>
+			
+			<div class="contact-block" id="contact-4">
+				<h2>Germany</h2>             
+				<div class="contact-details">
+					Severin Wendeler<br/>
+					Christian Severin<br/>
+					<a href="mailto:cs@severinwendeler.com">cs@severinwendeler.com</a><br/>
+					<a href="http://www.severinwendeler.de/heckmain.html" target="_blank">www.severinwendeler.com</a><br/>
+					+ 49 40 800 99 99<br/>
+					Gasstrasse 4<br/>
+					22761 Hamburg<br/>
+					Germany<br/>
+				</div>
+			</div>
+			
+			<div style="clear:both;"></div>
+        </div>
+	</script>
+
+
+    <script type="text/template" id="artistTemplate">       
+		<div class="artistThumb artistThumbID_<%= id %> artistThumbSlug_<%= id %>">
+			<a href="/artists/<%= slug %>">
+			
+				<div class="artistRollover" ><div class="artistRolloverInner">
+					<div class="artistTitle" unselectable="on"><%= title %></div>
+					<div class="viewProject" unselectable="on">View Project</div>
+				</div></div>
+			 
+				<img src="" class='thumbImg' title="<%= title %>" alt="<%= title %>">
+		 	</a>
+		</div>
+	</script>
+    
+    
+    <script type="text/template" id="filmTemplate">       
+		<H1><%= headline %></H1>
+
+			
+		<div class="filmList" id="scrollable">
+			<div class="scrollbar" style="width: 336px;"><div class="track"><div class="thumb"></div></div></div>
+			<div class="viewport"><div class="overview">
+			
+			<% _.each( data, function( film ){ %>	
+				<div class="filmThumb" id="film_<%= film.slug %>" style="width:<%= film.width %>px;height:<%= film.height %>px;">
+					
+					<div class="textarea">
+						<div class="filmTitle" unselectable="on"><%= film.title %></div>
+						<div class="filmHeadline" unselectable="on"><%= film.headline %></div>
+						<div class="filmDate" unselectable="on"><%= film.formattedDate %></div>
+						<div class="filmDescription" unselectable="on"><%= film.description %></div>			
+					</div>
+					
+					<a class="theLink" href="/films/<%= film.slug %>"  style="width:<%= film.width %>px;height:<%= film.height %>px;">
+						<div class="overlay"></div>
+						<div class="background" style="width:<%= film.width %>px;height:<%= film.height %>px;background-image: url(<%= film.thumbnail %>);"></div>
+					</a>
+						
+					<div class="movieContainer">
+						<video class="movie" width="<%= film.width %>" height="<%= film.height %>" controls preload  >							
+							<source src="images/galleries/<%= film.slug %>/video/<%= film.mp4 %>"  type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'> <!-- ; codecs="avc1.42E01E, mp4a.40.2" --><!-- list the mp4 file first for the sake of iPads, which only view the first source -->		
+							<source src="images/galleries/<%= film.slug %>/video/<%= film.webm %>" type='video/webm; codecs="vp8, vorbis"'>		
+							<source src="images/galleries/<%= film.slug %>/video/<%= film.ogv %>"  type='video/ogg; codecs="theora, vorbis"'>		
+							<!--<a href="images/galleries/<%= film.slug %>/video/<%= film.mp4 %>" id="player" style="display:block;width:<% film.width %>px;height:<%= film.height %>px;">Download mp4 file</a>-->
+						</video>
+					</div>	
+						
+				</div>	 	
+			<% }); %>	
+			
+			</div></div>		
+		</div>	
+		
+
+		
+	</script>
+   
+</body>
+</html>
+

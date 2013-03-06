@@ -1,0 +1,76 @@
+#scrollable {
+    margin: 20px 0 10px;
+    width: 100%;
+	font-size:12px;
+	background-color:none;
+}
+#scrollable .viewport {
+    height: 405px;
+    overflow: hidden;
+    position: relative;
+}
+#scrollable .overview {
+    left: 0;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    width: auto;
+}
+#scrollable .overview img {
+    float: left;
+}
+
+/* sizes */
+#scrollable .scrollbar, #scrollbar1 .track,#scrollable .thumb{height: 2px;}
+
+
+/* colors */
+#scrollable .scrollbar {background-color:#e5e5e5;}
+#scrollable .track { background-color:#e5e5e5;}
+#scrollable .thumb { 
+	background-color:#999;
+	border-top:8px solid #FFF;
+	border-bottom:8px solid #FFF;
+	margin-top:-8px;
+}
+#scrollable .thumb:hover { 
+	height:4px;
+	background-color:#666;
+	border-top:6px solid #FFF;
+	border-bottom:6px solid #FFF;
+	margin-top:-7px;
+}
+
+
+
+#scrollable .scrollbar {
+	clear: both;
+    margin: 0 0 5px;
+    position: relative;
+	margin-left:20%;
+	margin-bottom:10px;
+}
+#scrollable .track {
+    position: relative;
+    width: 100%;
+}
+#scrollable .thumb {
+    cursor: pointer;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    
+}
+#scrollable .thumb .end {
+    height: 25px;
+    overflow: hidden;
+    width: 5px;
+}
+#scrollable .disable {
+    display: none;
+}
+.noSelect {
+    -moz-user-select: none;
+}

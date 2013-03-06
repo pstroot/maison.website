@@ -1,0 +1,10 @@
+$ cat .gitignore
+
+# Can ignore specific files
+.DS_Store
+/public_html/images/films
+/public_html/images/galleries
+/public_html/api/DBConnect.php 
+/backups
+/Screenshots
+/source
