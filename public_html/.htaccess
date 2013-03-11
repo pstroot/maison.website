@@ -4,8 +4,7 @@
     IndexIgnore */*
 
 	RewriteEngine on
-	RewriteBase /work/Erik_Heck/maisondesprit/maison.website/public_html/
-	# RewriteBase /
+	RewriteBase /
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

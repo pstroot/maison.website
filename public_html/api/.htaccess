@@ -1,6 +1,5 @@
 RewriteEngine On
-RewriteBase /work/Erik_Heck/maisondesprit/maison.website/public_html/api/index.php
-# RewriteBase /api/index.php
+RewriteBase /api/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule (.+)$ ?params=$1 [L]

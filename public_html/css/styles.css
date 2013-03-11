@@ -1,3 +1,5 @@
+
+
 @charset "utf-8";
 @font-face {
   font-family: Bebas; 
@@ -31,8 +33,7 @@ header{
 a{text-decoration:none; color:#000000; }
 a:hover{text-decoration:none; color:#666; }
 
-header h1{ 
-	font-size:14px; 
+header h1{ 	
 	font-weight:normal; 
 	display:inline;  
 	padding:0px;
@@ -43,7 +44,7 @@ header h1{
 nav{
 	margin-left:auto;
 	margin-right:auto;
-	text-align:center;
+	text-align:left; /* for mobile devices, see bottom of screen for alignment on larger screens */ 
 }
 nav ul{  
 	display:inline;
@@ -53,11 +54,11 @@ nav ul{
 nav ul li{ 
 	list-style:none; 
 	display:inline;
-	margin-right:13px;
-	margin-left:13px;
-	font-size:14px; 
+	margin-right:5px; /* for mobile devices, see bottom of screen for alignment on larger screens */
+	margin-left:5px;  /* for mobile devices, see bottom of screen for alignment on larger screens */
 	letter-spacing:0.07em;
 }
+
 
 
 .mainContent{
@@ -332,8 +333,7 @@ nav ul li{
 }
 
 /******************** NEWS OVERLAY *********************/
-.news-container{
-	 
+.news-container{	 
 	position:absolute;
 	z-index:9999;
 	
@@ -343,9 +343,9 @@ nav ul li{
     left:50%;
     margin-left:-508px; /* negative half the size of width */
 	
-	color:#9d0f14;	
+	color:#9d0f14;
 	font-family:Bebas, Arial, Helvetica, sans-serif;
-	font-size:40px;
+	font-size:30px;
 	
 	background-color:#FFFFFF;
 	
@@ -362,6 +362,7 @@ nav ul li{
 .news-container ul{
 	margin:0px;
 	padding:0px;
+	margin-left:47px; /* just for mobile */
 }
 .news-container ul li{
 	display:inline;
@@ -374,7 +375,7 @@ nav ul li{
 .news-container ul li a{
 	opacity:.85;
 	color:#bc958f;
-	font-size:48px;
+	font-size:45px; /* just for mobile */
 }
 .news-container ul li a:hover{
 	opacity:1;
@@ -692,3 +693,47 @@ nav ul li{
 .imgSizeControls #sm{font-size:8px;}
 .imgSizeControls #med{font-size:9px;}
 .imgSizeControls #lg{font-size:10px;}
+
+
+/* FONT SIZES FOR HEADER */
+/*nav{-webkit-text-size-adjust: none; }*/
+nav ul li{ font-size:14px; }
+header h1{ font-size:14px; }
+.artistJumpMenu{ font-size:12px; }
+	
+/* for ipads and medium sized screens */
+@media only screen and (min-width: 780px) {
+	nav ul li{
+		margin-right:10px;
+		margin-left:10px;
+	}
+}
+
+
+
+/* for desktops and large screens */
+@media only screen and (min-width: 1024px) {
+	nav {
+		text-align:center;
+	}
+	nav ul li{
+		margin-right:13px;
+		margin-left:13px;
+	}
+
+	.news-container{	
+		width:1016px;
+		margin-left:-508px; /* negative half the size of width */
+		font-size:40px;
+		color:#9d0f14;
+	}
+	.news-container ul{
+		margin-left:0px;
+	}
+	.news-container ul li a{
+		font-size:48px;
+	}
+	
+	
+}
+
