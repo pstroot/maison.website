@@ -6,6 +6,9 @@ $ cat .gitignore
 /public_html/images/films
 /public_html/images/galleries
 /public_html/api/DBConnect.php 
+/public_html/_notes
+/public_html/css/_notes
+/public_html/models/_notes
 /backups
 /Screenshots
 /source
