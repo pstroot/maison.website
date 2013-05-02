@@ -266,12 +266,12 @@ app.ArtistView = app.GenericView.extend({
 		console.log("Go To Next")
 		if(this.activeModelIndex == this.collection.models.length-1) return;
 		var theSlug = this.collection.models[this.activeModelIndex+1].get('slug');
-		app.router.navigate('#/artists/'+this.collection.slug+"/"+theSlug, {trigger: true});
+		app.router.navigate('/artists/'+this.collection.slug+"/"+theSlug, {trigger: true});
 	},
 	gotoPrevious: function(e){ 
 		if(this.activeModelIndex == 0) return;
 		var theSlug = this.collection.models[this.activeModelIndex-1].get('slug');
-		app.router.navigate('#/artists/'+this.collection.slug+"/"+theSlug, {trigger: true});
+		app.router.navigate('/artists/'+this.collection.slug+"/"+theSlug, {trigger: true});
 	},
 	
 	

@@ -6,7 +6,6 @@
     <meta name="keywords" content="Erik Madigan Heck, nomenus quarterly, photography, , Ann Demeulemeester, Haider Ackermann, Valentino, Dries Van Noten, Rodarte, Giambattista Valli, film, parsons, gallery, new york, gallery, exhibition">
   	<base href="/" />
     
-    
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script> 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
@@ -28,6 +27,9 @@
     <script src="models/ArtistCollection.js"></script>
     <script src="models/ImageCollection.js"></script>
     <script src="models/FilmCollection.js"></script>
+    <script src="views/Index_v2a.js"></script>
+    <script src="views/Index_v2b.js"></script>
+    <script src="views/Index_v2c.js"></script>
 
     <script>
 
@@ -109,6 +111,8 @@ $(document).on("click", "a[href^='/']", function(event){
 		}
 	};
 	
+
+	
 	app.Router = Backbone.Router.extend({
 		routes: {
 			"films" 		: "showFilms",
@@ -132,10 +136,25 @@ $(document).on("click", "a[href^='/']", function(event){
 		showPress 	: function(){					app.viewManager.goto_press();					},
 		showContact : function(){					app.viewManager.goto_contact();					},
 		
+		
 		showIndex : function(){	
-			app.viewManager.goto_photographs();
-			app.viewManager.showNews();	
+			var indexRoutes = new Array(this.showIndex_v2a,this.showIndex_v2b,this.showIndex_v2c); // multiple homepage options
+			if(this.randomIndex == null){											// if it's our first visit
+				this.randomIndex = Math.floor((Math.random()*indexRoutes.length));	// then choose a random homepage
+			} else {																// if we've been at the homepage before...
+				this.randomIndex++;													// then go to the next one
+				if(this.randomIndex >= indexRoutes.length) this.randomIndex = 0;	
+			}
+			//this.randomIndex = 2
+			indexRoutes[this.randomIndex]();										// call the function that will display our home page
 		},
+		
+		showIndex_v1  : function() {	app.viewManager.goto_photographs();app.viewManager.showNews();	},
+		showIndex_v2a : function(){	app.viewManager.goto_index_v2a();},
+		showIndex_v2b : function(){	app.viewManager.goto_index_v2b();},
+		showIndex_v2c : function(){	app.viewManager.goto_index_v2c();},
+		
+		
 		showArtists : function(){
 			app.viewManager.goto_photographs();
 			app.viewManager.hideNews();	
@@ -525,7 +544,35 @@ $(document).on("click", "a[href^='/']", function(event){
 
 		
 	</script>
-   <div>Log In</div>
+    
+    
+    <script type="text/template" id="index_v2a_Template"> 
+		<div style="text-align:center;margin:auto;">
+			<a href='/photos'>
+				<img src="images/index_images/intro_page_01.jpg" border="0">
+			</a>
+		</div>
+	</script>
+    
+    <script type="text/template" id="index_v2b_Template"> 
+		<div style="text-align:center;margin:auto;">
+			<a href='/artists/ny_times'>
+				<img src="images/index_images/intro_page_02.jpg" border="0">
+			</a>
+		</div>
+	</script>
+    
+    <script type="text/template" id="index_v2c_Template"> 
+		<div id="index_v2c_centeredimage">			
+			<a href='/artists/mary_katrantzou_cathedrals'><img src="images/index_images/intro_page_03a.jpg" border="0"></a>
+		</div>	
+		<div id="index_v2c_centeredimage">			
+			<a href='/artists/mary_katrantzou_cathedrals'><img src="images/index_images/intro_page_03b.jpg" border="0"></a>		
+		</div>
+		<div id="index_v2c_text">Click here to enter Mary Katrantzou fall / winter 2013</div>			
+	</script>
+    
+   <!--<div>Log In</div>-->
 </body>
 </html>
 

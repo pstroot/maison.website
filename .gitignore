@@ -6,9 +6,37 @@ $ cat .gitignore
 /public_html/images/films
 /public_html/images/galleries
 /public_html/api/DBConnect.php 
+public_html/api/DBConnect.php 
 /public_html/_notes
 /public_html/css/_notes
 /public_html/models/_notes
 /backups
 /Screenshots
 /source
+
+############
+## Windows
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Mac crap
+.DS_Store
+
+# Others
+[Bb]in
+[Oo]bj
+sql
+TestResults
+*.Cache
+ClientBin
+stylecop.*
+~$*
+*.dbmdl
+Generated_Code #added for RIA/Silverlight projects
+_notes
+dwsync.xml

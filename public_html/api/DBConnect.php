@@ -1,5 +1,4 @@
 <?
-
 class DBConnect {
 	
 	const DB_SERVER = "localhost";
@@ -10,7 +9,6 @@ class DBConnect {
 	
 	public function __construct(){
 		$this->dbConnect();// Initiate Database connection
-		
 	}
 	
 	//Database connection
